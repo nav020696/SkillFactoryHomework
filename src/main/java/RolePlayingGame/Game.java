@@ -13,24 +13,24 @@ import java.io.InputStreamReader;
 
 public class Game {
 
-    public static Hero hero = null;
-    public static Seller seller;
-    public static Fight fight;
-    public static boolean isGameContinues = true;
+    public Hero hero;
+    public Seller seller;
+    public Fight fight;
+    private boolean isGameOver = false;
     private static BufferedReader reader;
 
-    public static void main(String[] args) {
-        System.out.println("Введите имя персонажа");
+    public Game() {
+        seller = new Seller();
+        fight = new Fight();
         reader = new BufferedReader(new InputStreamReader(System.in));
+    }
+
+    public static void main(String[] args) {
+        Game game = new Game();
+        System.out.println("Введите имя персонажа");
         try {
-            heroesInitialization(reader.readLine());
-            while (isGameContinues) {
-                System.out.println("Куда вы хотите пойти? Введите цифру действия");
-                System.out.println("1. К торговцу");
-                System.out.println("2. В тёмный лес");
-                System.out.println("3. На выход");
-                playersChoice(reader.readLine());
-            }
+            game.hero = new Hero(reader.readLine(), 1000, 20, 50);
+            game.run();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -39,12 +39,21 @@ public class Game {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Игра завершена");
         }
+        System.out.println("Игра завершена");
 
     }
+    public void run() throws IOException { //запуск игры
+        while (!isGameOver) {
+            System.out.println("Куда вы хотите пойти? Введите цифру действия");
+            System.out.println("1. К торговцу");
+            System.out.println("2. В тёмный лес");
+            System.out.println("3. На выход");
+            playersChoice(reader.readLine());
+        }
+    }
 
-    public static void playersChoice(String action) throws IOException {
+    public void playersChoice(String action) throws IOException {
         switch (action) {
             case "1":
                 trading();
@@ -53,7 +62,7 @@ public class Game {
                 fight();
                 break;
             case "3":
-                isGameContinues = false;
+                isGameOver = true;
                 break;
             case "4":
                 playersChoice("1");
@@ -67,16 +76,16 @@ public class Game {
     }
 
 
-    public static Player generateMonster() {
+    public Player generateMonster() {
         int random = (int) (Math.random() * 100);
         if (random % 2 == 0) {
-            return new Goblin("Goblin", 50, 10, 10, 100, 20);
+            return new Goblin("Goblin", 400, 10, 10, 100, 350);
         } else {
-            return new Skeleton("Skeleton", 30, 15, 15, 150, 15);
+            return new Skeleton("Skeleton", 300, 15, 15, 150, 250);
         }
     }
 
-    public static void trading() throws IOException {
+    public void trading() throws IOException {
         System.out.println("Стоимость одного зелья " + seller.getPotion().getPrice() + " золотых монет.");
         System.out.println("Хотите знать количество монет у вашего героя? (да/нет)");
         if (reader.readLine().equals("да")) {
@@ -94,8 +103,8 @@ public class Game {
         if (hero.getGold() - sum >= 0 && sum != 0) {
             hero.setGold(hero.getGold() - sum);
             hero.setHealth(hero.getHealth() + 100 * count);
-            System.out.println("Вы купили " + count + " склянок с зельем. Здоровье героя увеличено на " + hero.getHealth() + "ед.");
-            System.out.println("Остаток золотых монет у героя " + hero.getGold() + ".");
+            System.out.println("Вы купили " + count + " склянок с зельем. Здоровье героя увеличено до " + hero.getHealth() +
+                    "ед здоровья. Остаток золотых монет у героя " + hero.getGold() + ".");
         } else if (sum == 0) {
             System.out.println("Количество зелья для покупки 0");
         }else {
@@ -106,16 +115,20 @@ public class Game {
         playersChoice(reader.readLine());
     }
 
-    public static void fight() throws IOException {
+    public void fight() throws IOException {
         fight.fight(hero, generateMonster());
-        System.out.println("5. Продолжить бой");
-        System.out.println("6. Вернуться в город");
-        playersChoice(reader.readLine());
+        if (fight.getWinner().equals("hero")) {
+            System.out.println(hero.getName() + " победил и заработал 300 монет и 1ед опыта");
+            hero.setGold(hero.getGold() + 300);
+            hero.setExperience(hero.getExperience() + 1);
+            System.out.println("5. Продолжить бой");
+            System.out.println("6. Вернуться в город");
+            playersChoice(reader.readLine());
+        }else{
+            System.out.println(hero.getName() + " проиграл :(");
+            playersChoice("3");
+        }
+
     }
 
-    public static void heroesInitialization(String heroName){
-        hero = new Hero(heroName, 1000, 20, 50);
-        seller = new Seller();
-        fight = new Fight();
-    }
 }
