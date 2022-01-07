@@ -10,4 +10,8 @@ public class Seller {
     public int sell(int count){
         return count * potion.getPrice();
     }
+
+    public Potion getPotion() {
+        return potion;
+    }
 }

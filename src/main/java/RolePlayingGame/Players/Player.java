@@ -19,7 +19,7 @@ public abstract class Player {
 
     public int attack(){
         int i = (int)(Math.random() * 100);
-        //if (i >= 90) return power * 2;
+        if (i >= 90) return power * 2;
         if (i < dexterity * 3) return power;
         return 0;
     }
