@@ -49,6 +49,7 @@ public class Game {
             System.out.println("1. К торговцу");
             System.out.println("2. В тёмный лес");
             System.out.println("3. На выход");
+            System.out.println("*. Вывести информацию о герое игры");
             playersChoice(reader.readLine());
         }
     }
@@ -69,6 +70,9 @@ public class Game {
                 break;
             case "5":
                 playersChoice("2");
+                break;
+            case "*":
+                heroInformation();
                 break;
             default:
                 break;
@@ -128,7 +132,14 @@ public class Game {
             System.out.println(hero.getName() + " проиграл :(");
             playersChoice("3");
         }
-
     }
 
+    public void heroInformation(){
+        System.out.println("Имя вашего героя: " + hero.getName() + ";");
+        System.out.println("Здоровье вашего героя: " + hero.getHealth() + "ед;");
+        System.out.println("Запас золотых монет вашего героя: " + hero.getGold() + ";");
+        System.out.println("Ловкость вашего героя: " + hero.getDexterity() + "ед;");
+        System.out.println("Уровень опыта вашего героя: " + hero.getExperience() + ";");
+        System.out.println("Сила удара вашего героя: " + hero.getPower() + ".");
+    }
 }
